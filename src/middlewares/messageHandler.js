@@ -17,6 +17,7 @@ import { isAdmin } from "./index.js";
 
 export async function messageHandler(socket, webMessage) {
   try {
+    console.log("MESSAGEHANDLER EXECUTADO");
     if (!webMessage?.key) {
       return;
     }
@@ -48,7 +49,22 @@ export async function messageHandler(socket, webMessage) {
     if (userIsAdmin) {
       return;
     }
+const texto = JSON.stringify(webMessage.message || "");
 
+console.log("MENSAGEM RECEBIDA:", texto);
+
+if (
+  texto.includes("Confirmado") &&
+  texto.includes("Transferiste")
+) {
+  console.log("COMPROVATIVO DETECTADO!");
+
+  await socket.sendMessage(remoteJid, {
+    text: "✅ COMPROVATIVO DETECTADO!"
+  });
+
+  return;
+}
     const antiGroups = readGroupRestrictions();
     const hasRestrictedPaymentMessage =
       antiGroups[remoteJid]?.["anti-payment"] && hasPaymentMessage(webMessage);
