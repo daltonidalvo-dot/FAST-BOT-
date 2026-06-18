@@ -30,7 +30,7 @@ import pino from "pino";
 import { PREFIX, TEMP_DIR } from "./config.js";
 import { load } from "./loader.js";
 import { badMacHandler } from "./utils/badMacHandler.js";
-import { onlyNumbers, question } from "./utils/index.js";
+import { onlyNumbers,} from "./utils/index.js";
 import {
   bannerLog,
   errorLog,
@@ -97,26 +97,7 @@ export async function connect() {
     shouldSyncHistoryMessage: () => false,
   });
 
-  if (!socket.authState.creds.registered) {
-    clearScreenWithBanner();
-    console.log(
-      'Informe o número do bot (SP/RJ exigem 9º dígito). \nExemplo: "+5511912345678", demais estados: "+554112345678":',
-    );
-
-    const phoneNumber = await question("Número: ");
-
-    if (!phoneNumber) {
-      errorLog(
-        'Número de telefone inválido! Tente novamente com o comando "npm start".',
-      );
-
-      process.exit(1);
-    }
-
-    const code = await socket.requestPairingCode(onlyNumbers(phoneNumber));
-
-    console.log(`Código de pareamento: ${formatPairingCode(code)}`);
-  }
+  
 
   socket.ev.on("connection.update", async (update) => {
     const { connection, lastDisconnect } = update;
