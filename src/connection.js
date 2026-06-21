@@ -30,7 +30,7 @@ import pino from "pino";
 import { PREFIX, TEMP_DIR } from "./config.js";
 import { load } from "./loader.js";
 import { badMacHandler } from "./utils/badMacHandler.js";
-import { onlyNumbers,} from "./utils/index.js";
+import { onlyNumbers, question } from "./utils/index.js";
 import {
   bannerLog,
   errorLog,
@@ -97,7 +97,17 @@ export async function connect() {
     shouldSyncHistoryMessage: () => false,
   });
 
-  
+ if (!socket.authState.creds.registered) {
+  const phoneNumber = await question("Número: ");
+
+  const code = await socket.requestPairingCode(
+    onlyNumbers(phoneNumber)
+  );
+
+  console.log(
+    `Código de pareamento: ${formatPairingCode(code)}`
+  );
+} 
 
   socket.ev.on("connection.update", async (update) => {
     const { connection, lastDisconnect } = update;
